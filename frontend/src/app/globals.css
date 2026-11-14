@@ -1,0 +1,249 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --font-sora: 'Sora', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.dark {
+  --background: #080c14;
+  --foreground: #f8fafc;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: 'Sora', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  letter-spacing: -0.015em;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   SEAMLESS SCROLLING (NO RIGHT-SIDE VERTICAL SCROLLBAR)
+   Preserves full mouse wheel, trackpad & touch scroll while hiding
+   the vertical scrollbar bar across the entire app and modals
+   ══════════════════════════════════════════════════════════════════ */
+html,
+body,
+* {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE & Edge */
+}
+
+::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
+}
+
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-none::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.no-scrollbar,
+.scrollbar-none {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+/* Glassmorphism helpers */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+.dark .glass-panel {
+  background: rgba(13, 20, 34, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+.dark .glass-card {
+  background: rgba(10, 15, 26, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Print Styles for Invoice Modal */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printableInvoice, #printableInvoice * {
+    visibility: visible;
+  }
+  #printableInvoice {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   CIRCULAR LEAF RING LOADER (2060 AGRI MODERN TREND)
+   Colours: Pure green & light green palette only.
+   Light mode default:
+     --leaf-main: #1fa85a
+     --leaf-light: #b9f5c8
+     --leaf-seed: #0b6b38
+   Dark mode (<html data-theme="dark"> or .dark):
+     --leaf-main: #6df59a
+     --leaf-light: #1d4d31
+     --leaf-seed: #e4ffec
+   ══════════════════════════════════════════════════════════════════ */
+
+:root {
+  --leaf-main: #1fa85a;
+  --leaf-light: #b9f5c8;
+  --leaf-seed: #0b6b38;
+}
+
+[data-theme="dark"],
+.dark {
+  --leaf-main: #6df59a;
+  --leaf-light: #1d4d31;
+  --leaf-seed: #e4ffec;
+}
+
+/* Base Loader Container */
+.leaf-ring-loader {
+  --s: 80px;
+  width: var(--s);
+  height: var(--s);
+  display: inline-block;
+  vertical-align: middle;
+  overflow: visible;
+  font-family: 'Sora', sans-serif;
+}
+
+/* Leaf Petal Nodes */
+.leaf-ring-loader .leaf-petal {
+  transform-origin: 0 -5px;
+  animation: leafWaveGrow 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-delay: calc(var(--i, 0) * 0.2s);
+  fill: var(--leaf-light);
+  opacity: 0.22;
+  will-change: transform, opacity, fill;
+}
+
+/* Animation Loop: 1.6s cycle, 0.2s delay between leaves */
+@keyframes leafWaveGrow {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.22;
+    fill: var(--leaf-light);
+  }
+  30% {
+    transform: scale(1);
+    opacity: 1;
+    fill: var(--leaf-main);
+  }
+  65% {
+    transform: scale(0.5);
+    opacity: 0.22;
+    fill: var(--leaf-light);
+  }
+  100% {
+    transform: scale(0.5);
+    opacity: 0.22;
+    fill: var(--leaf-light);
+  }
+}
+
+/* Center Seed Pulse */
+.leaf-ring-loader .leaf-seed {
+  fill: var(--leaf-seed);
+  transform-origin: 0 0;
+  animation: leafSeedPulse 1.6s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes leafSeedPulse {
+  0%, 100% {
+    transform: scale(0.85);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+/* Current Color / Button Inherit Mode */
+.leaf-ring-loader.is-inherit .leaf-petal {
+  fill: currentColor;
+  animation-name: leafWaveGrowInherit;
+}
+
+.leaf-ring-loader.is-inherit .leaf-seed {
+  fill: currentColor;
+}
+
+@keyframes leafWaveGrowInherit {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.22;
+  }
+  30% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  65%, 100% {
+    transform: scale(0.5);
+    opacity: 0.22;
+  }
+}
+
+/* ── PROGRESS MODE (--p from 0 to 100) ── */
+.leaf-ring-loader.is-progress .leaf-petal {
+  animation: none !important;
+  --share-min: calc(var(--i, 0) * 12.5);
+  --ratio: clamp(0, calc((var(--p, 0) - var(--share-min)) / 12.5), 1);
+  transform: scale(calc(0.5 + 0.5 * var(--ratio)));
+  opacity: calc(0.22 + 0.78 * var(--ratio));
+  fill: color-mix(in srgb, var(--leaf-main) calc(var(--ratio) * 100%), var(--leaf-light));
+}
+
+.leaf-ring-loader.is-progress.is-inherit .leaf-petal {
+  fill: currentColor;
+}
+
+.leaf-ring-loader.is-progress .leaf-seed {
+  animation: none !important;
+  --seed-p: clamp(0, calc(var(--p, 0) / 100), 1);
+  transform: scale(calc(0.85 + 0.35 * var(--seed-p)));
+  opacity: calc(0.6 + 0.4 * var(--seed-p));
+}
+
+/* Accessibility: Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .leaf-ring-loader .leaf-petal {
+    animation: none !important;
+    opacity: 0.85 !important;
+    transform: scale(1) !important;
+    fill: var(--leaf-main) !important;
+  }
+  .leaf-ring-loader .leaf-seed {
+    animation: none !important;
+    opacity: 0.85 !important;
+    transform: scale(1) !important;
+  }
+}

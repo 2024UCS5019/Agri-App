@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agri-App — Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css?v=2055.6" />
+</head>
+<body class="dark">
+
+  <!-- ═══ ANIMATED BACKGROUND LAYERS ═══ -->
+  <canvas id="particleCanvas"></canvas>
+  <div class="aurora-layer"></div>
+  <div class="grid-overlay"></div>
+  <div class="scan-line"></div>
+
+  <!-- ═══ CENTERED LOGIN CARD ═══ -->
+  <div class="login-wrapper">
+    <div class="glass-card">
+      <div class="card-border-anim"></div>
+      <div class="card-glow"></div>
+
+      <!-- Header -->
+      <div class="card-header">
+        <div class="brand-logo">
+          <div class="logo-ring"></div>
+          <span class="material-icons-round logo-icon">agriculture</span>
+          <div class="logo-pulse"></div>
+        </div>
+        <div class="brand-info">
+          <h1 class="brand-title">Agri-App</h1>
+          <p class="brand-tag">Tractor Bill Management</p>
+        </div>
+        <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+          <span class="material-icons-round" id="themeIcon">light_mode</span>
+        </button>
+      </div>
+
+      <div class="holo-divider"></div>
+
+      <h2 class="form-title" id="formTitle">Welcome back</h2>
+      <p class="form-subtitle" id="formSubtitle">Enter your credentials to continue</p>
+
+      <!-- Security Alert Banner -->
+      <div class="security-banner" id="securityBanner" style="display: none;"></div>
+
+      <!-- Tab switcher -->
+      <div class="tab-container">
+        <div class="tab-indicator" id="tabIndicator"></div>
+        <button class="tab-btn active" id="loginTab">Log in</button>
+        <button class="tab-btn" id="signupTab">Sign up</button>
+      </div>
+
+      <!-- Form -->
+      <form id="authForm" novalidate>
+
+        <!-- Full Name (sign up only) -->
+        <div class="field-group signup-only" id="nameGroup">
+          <label class="field-label">Full Name</label>
+          <div class="input-wrap">
+            <span class="material-icons-round input-icon">person_outline</span>
+            <input type="text" id="fullName" placeholder="Enter your name" autocomplete="name" />
+            <div class="input-glow"></div>
+          </div>
+          <span class="field-error" id="nameError"></span>
+        </div>
+
+        <!-- Email -->
+        <div class="field-group">
+          <label class="field-label">Email</label>
+          <div class="input-wrap">
+            <span class="material-icons-round input-icon">mail_outline</span>
+            <input type="email" id="email" placeholder="you@example.com" autocomplete="email" required />
+            <div class="input-glow"></div>
+          </div>
+          <span class="field-error" id="emailError"></span>
+        </div>
+
+        <!-- Password -->
+        <div class="field-group">
+          <label class="field-label">Password</label>
+          <div class="input-wrap">
+            <span class="material-icons-round input-icon">lock_outline</span>
+            <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required />
+            <button type="button" class="eye-btn" id="togglePassword">
+              <span class="material-icons-round">visibility_off</span>
+            </button>
+            <div class="input-glow"></div>
+          </div>
+          <span class="field-error" id="passwordError"></span>
+        </div>
+
+        <!-- Password strength (sign up only) -->
+        <div class="strength-bar signup-only" id="strengthBar">
+          <div class="bar-track">
+            <div class="bar-fill" id="barFill"></div>
+          </div>
+          <span class="strength-label" id="strengthLabel"></span>
+        </div>
+
+        <!-- Confirm Password (sign up only) -->
+        <div class="field-group signup-only" id="confirmGroup">
+          <label class="field-label">Confirm Password</label>
+          <div class="input-wrap">
+            <span class="material-icons-round input-icon">lock_outline</span>
+            <input type="password" id="confirmPassword" placeholder="••••••••" autocomplete="new-password" />
+            <button type="button" class="eye-btn" id="toggleConfirm">
+              <span class="material-icons-round">visibility_off</span>
+            </button>
+            <div class="input-glow"></div>
+          </div>
+          <span class="field-error" id="confirmError"></span>
+        </div>
+
+        <!-- Role selection (sign up only) -->
+        <div class="role-section signup-only" id="roleSection">
+          <label class="field-label">Role</label>
+          <div class="role-cards">
+            <button type="button" class="role-card selected" data-role="Owner">
+              <span class="material-icons-round role-icon">admin_panel_settings</span>
+              <strong>Owner</strong>
+              <span class="role-sub">Manage Fleet</span>
+              <div class="role-check"><span class="material-icons-round">check</span></div>
+            </button>
+            <button type="button" class="role-card" data-role="Driver">
+              <span class="material-icons-round role-icon">local_shipping</span>
+              <strong>Driver</strong>
+              <span class="role-sub">Operate Tractor</span>
+              <div class="role-check"><span class="material-icons-round">check</span></div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Remember me + Forgot (login only) -->
+        <div class="login-extras login-only" id="loginExtras">
+          <label class="remember">
+            <input type="checkbox" id="rememberMe" />
+            <span class="custom-check"></span>
+            <span>Remember me</span>
+          </label>
+          <a href="#" class="forgot-link" id="forgotLink">Forgot password?</a>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <span class="btn-text" id="btnText">Log in</span>
+          <span class="material-icons-round btn-arrow">arrow_forward</span>
+          <span class="btn-spinner" id="btnSpinner"></span>
+        </button>
+      </form>
+
+      <!-- Continue with Google Button -->
+      <button type="button" class="btn-continue-with-google" id="googleBtn" onclick="openGoogleModal()" title="Continue with Google">
+        <svg viewBox="0 0 24 24" width="20" height="20">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+        <span>Continue with Google</span>
+      </button>
+
+      <!-- Terms -->
+      <p class="terms">By continuing, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a></p>
+    </div>
+  </div>
+
+  <!-- ═══════════ OFFICIAL GOOGLE ACCOUNT CHOOSER MODAL ═══════════ -->
+  <div class="modal-overlay" id="googleModal">
+    <div class="google-oauth-window">
+      <!-- Top Google Window Bar -->
+      <div class="google-window-topbar">
+        <div class="google-branding">
+          <svg viewBox="0 0 24 24" width="20" height="20">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <span class="google-window-title">Sign in with Google</span>
+        </div>
+        <button class="google-close-btn" id="closeModal" onclick="closeGoogleModal()" title="Close">
+          <span class="material-icons-round">close</span>
+        </button>
+      </div>
+
+      <!-- Main Split Body (matches uploaded image) -->
+      <div class="google-window-body">
+        <!-- Left Column -->
+        <div class="google-col-left">
+          <h2 class="google-choose-title">Choose an account</h2>
+          <p class="google-continue-sub">to continue to <span class="app-host-name">Agri-App</span></p>
+        </div>
+
+        <!-- Right Column -->
+        <div class="google-col-right">
+          <div class="google-accounts-picker">
+            <!-- Account 1: Logesh M (logesh.marimuthu25@gmail.com) -->
+            <div class="google-acct-row" onclick="selectGoogleAccount('Logesh M', 'logesh.marimuthu25@gmail.com')" data-name="Logesh M" data-email="logesh.marimuthu25@gmail.com">
+              <div class="google-avatar" style="background-color: #e65100;">L</div>
+              <div class="google-acct-details">
+                <span class="google-acct-name">Logesh M</span>
+                <span class="google-acct-email">logesh.marimuthu25@gmail.com</span>
+              </div>
+            </div>
+
+            <!-- Account 2: LOGESH M (logeshlogeshm.17@gmail.com) -->
+            <div class="google-acct-row" onclick="selectGoogleAccount('LOGESH M', 'logeshlogeshm.17@gmail.com')" data-name="LOGESH M" data-email="logeshlogeshm.17@gmail.com">
+              <div class="google-avatar" style="background-color: #004d40;">L</div>
+              <div class="google-acct-details">
+                <span class="google-acct-name">LOGESH M</span>
+                <span class="google-acct-email">logeshlogeshm.17@gmail.com</span>
+              </div>
+            </div>
+
+            <!-- Option 3: Use another account -->
+            <div class="google-acct-row use-another-row" id="useAnotherAccountRow" onclick="toggleUseAnotherAccount()">
+              <div class="google-avatar google-avatar-outline">
+                <span class="material-icons-round">account_circle</span>
+              </div>
+              <div class="google-acct-details">
+                <span class="google-acct-name">Use another account</span>
+              </div>
+            </div>
+
+            <!-- Expandable Custom Account Form -->
+            <div class="custom-google-box" id="customGoogleBox" style="display: none;">
+              <p class="custom-google-desc">Enter any Google account to sign in:</p>
+              <div class="input-wrap custom-input-wrap">
+                <span class="material-icons-round input-icon">person</span>
+                <input type="text" id="customGoogleName" placeholder="Full Name (e.g. Logesh M)" />
+              </div>
+              <div class="input-wrap custom-input-wrap">
+                <span class="material-icons-round input-icon">mail_outline</span>
+                <input type="email" id="customGoogleEmail" placeholder="username@gmail.com" />
+              </div>
+              <button type="button" class="btn-custom-google-submit" id="btnCustomGoogleSubmit">
+                <span>Continue with this account</span>
+                <span class="material-icons-round" style="font-size: 16px;">arrow_forward</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Bottom Privacy Note -->
+          <p class="google-footer-disclaimer">
+            Before using this app, you can review Agri-App's <a href="#" class="g-legal-link">Privacy Policy</a> and <a href="#" class="g-legal-link">Terms of Service</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ FORGOT PASSWORD MODAL ═══════════ -->
+  <div class="modal-overlay" id="forgotModal">
+    <div class="modal-card modal-sm">
+      <div class="modal-border-anim"></div>
+      <h3>Reset Password</h3>
+      <p class="reset-desc">Enter your email and we'll send you a reset link.</p>
+      <div class="input-wrap">
+        <span class="material-icons-round input-icon">mail_outline</span>
+        <input type="email" id="resetEmail" placeholder="you@example.com" />
+        <div class="input-glow"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="cancelReset">Cancel</button>
+        <button class="btn-primary-sm" id="sendReset">Send Link</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ LOADING OVERLAY ═══════════ -->
+  <div class="modal-overlay" id="loadingOverlay">
+    <div class="loading-card">
+      <div class="loader-dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+      <p id="loadingText">Signing in...</p>
+    </div>
+  </div>
+
+  <!-- ═══════════ SNACKBAR ═══════════ -->
+  <div class="snackbar" id="snackbar"></div>
+
+  <script src="script.js?v=2055.6"></script>
+</body>
+</html>

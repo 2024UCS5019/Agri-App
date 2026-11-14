@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agri-App — Tractor Bill Management Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css?v=2060.1" />
+  <link rel="stylesheet" href="dashboard.css?v=2060.1" />
+</head>
+<body class="dark">
+
+  <!-- ═══ ANIMATED BACKGROUND LAYERS (OPTIMIZED PURE GPU COMPOSITING) ═══ -->
+  <div class="aurora-layer"></div>
+  <div class="grid-overlay"></div>
+
+  <!-- ═══ LUXURY DASHBOARD SHELL ═══ -->
+  <div class="dashboard-shell-2060">
+
+    <!-- ═══ LEFT VERTICAL SIDEBAR ═══ -->
+    <aside class="sidebar-2060" id="sidebar2060">
+      
+      <!-- Luxury Brand Header -->
+      <div class="sidebar-brand">
+        <div class="brand-logo-mini">
+          <span class="material-icons-round">agriculture</span>
+          <div class="logo-radar-ring"></div>
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-name">Agri-App <span class="brand-year">PRO</span></h1>
+          <span class="brand-sub">Tractor Fleet & Billing</span>
+        </div>
+        <button class="sidebar-toggle-btn" id="sidebarToggle" title="Collapse / Expand Sidebar">
+          <span class="material-icons-round" id="sidebarToggleIcon">menu_open</span>
+        </button>
+      </div>
+
+      <!-- Vertical Navigation Menu -->
+      <nav class="sidebar-nav">
+        <div class="nav-group-label">NAVIGATION</div>
+        <button class="nav-tab-btn active" data-view="billing">
+          <span class="material-icons-round">receipt_long</span>
+          <span class="tab-label">New Bill</span>
+        </button>
+        <button class="nav-tab-btn" data-view="history">
+          <span class="material-icons-round">history</span>
+          <span class="tab-label">Work History</span>
+          <span class="badge" id="historyCount">0</span>
+        </button>
+        <button class="nav-tab-btn" data-view="profile">
+          <span class="material-icons-round">badge</span>
+          <span class="tab-label">Profile & Fleet</span>
+        </button>
+      </nav>
+
+      <!-- Bottom User & Controls (Avatar M, Muthu, Driver, Theme Toggle, Logout) -->
+      <div class="sidebar-footer">
+        <div class="user-pill-2060">
+          <div class="user-avatar-2060" id="userAvatar">M</div>
+          <div class="user-details-2060">
+            <span class="user-name" id="userName">Muthu</span>
+            <span class="user-role" id="userRole">Driver</span>
+          </div>
+          <button class="theme-toggle-mini" id="themeToggle" title="Toggle theme">
+            <span class="material-icons-round" id="themeIcon">light_mode</span>
+          </button>
+        </div>
+
+        <button class="btn-logout-2060" id="logoutBtn" title="Log out">
+          <span class="material-icons-round">logout</span>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ═══ RIGHT WORKSPACE CONTENT ═══ -->
+    <main class="dashboard-workspace-2060">
+      
+      <!-- Top HUD Ribbon Strip -->
+      <div class="workspace-hud-bar">
+        <div class="hud-breadcrumbs">
+          <span class="material-icons-round" style="font-size: 16px; color: var(--green);">grid_view</span>
+          <span>Operations</span>
+          <span class="material-icons-round" style="font-size: 14px;">chevron_right</span>
+          <span class="hud-current-view" id="activeViewTitle">New Bill & Live Work Timer</span>
+        </div>
+        <div class="hud-clock-strip">
+          <div class="hud-gps">
+            <span class="material-icons-round" style="font-size: 14px;">near_me</span>
+            <span>11.1271° N, 78.6569° E</span>
+          </div>
+          <div class="hud-time" id="liveClock2060">28 OCT 2060 • 18:30:00</div>
+        </div>
+      </div>
+
+    <!-- ═══════════════════════════════════════════
+         VIEW 1: NEW BILL / LIVE TRACTOR TIMER
+         ═══════════════════════════════════════════ -->
+    <section class="view-section active" id="viewBilling">
+      
+      <!-- Top Metrics Ribbon -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-icon" style="background: rgba(0,229,255,0.1); color: var(--cyan);">
+            <span class="material-icons-round">payments</span>
+          </div>
+          <div>
+            <span class="metric-label">Total Revenue</span>
+            <h3 class="metric-value" id="kpiRevenue">₹0</h3>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon" style="background: rgba(34,197,94,0.1); color: var(--green);">
+            <span class="material-icons-round">timelapse</span>
+          </div>
+          <div>
+            <span class="metric-label">Hours Logged</span>
+            <h3 class="metric-value" id="kpiHours">0.0 hrs</h3>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon" style="background: rgba(245,158,11,0.1); color: #f59e0b);">
+            <span class="material-icons-round">pending_actions</span>
+          </div>
+          <div>
+            <span class="metric-label">Pending Dues</span>
+            <h3 class="metric-value" id="kpiPending">₹0</h3>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon" style="background: rgba(168,85,247,0.1); color: var(--purple);">
+            <span class="material-icons-round">assignment_turned_in</span>
+          </div>
+          <div>
+            <span class="metric-label">Completed Jobs</span>
+            <h3 class="metric-value" id="kpiJobs">0</h3>
+          </div>
+        </div>
+      </div>
+
+      <!-- Billing Grid -->
+      <div class="billing-grid">
+
+        <!-- Left Column: Work & Customer Details Form -->
+        <div class="glass-panel">
+          <h2 class="panel-title">
+            <span class="material-icons-round">edit_document</span>
+            Job & Customer Details
+          </h2>
+
+          <form id="jobForm" novalidate>
+
+            <!-- Work Selection -->
+            <div class="form-section">
+              <label class="section-label">Select Implement / Work Type</label>
+              <div class="work-chips">
+                <button type="button" class="work-chip active" data-type="Rotavator">
+                  <span class="material-icons-round">agriculture</span>
+                  Rotavator
+                </button>
+                <button type="button" class="work-chip" data-type="Spring Cultivator">
+                  <span class="material-icons-round">hardware</span>
+                  Spring Cultivator
+                </button>
+                <button type="button" class="work-chip" data-type="Harvest">
+                  <span class="material-icons-round">grass</span>
+                  Harvest
+                </button>
+                <button type="button" class="work-chip" data-type="Disc Cultivator">
+                  <span class="material-icons-round">radar</span>
+                  Disc Cultivator
+                </button>
+              </div>
+
+              <!-- Cultivator Tine Variants -->
+              <div class="variant-wrapper" id="variantWrapper" style="display: none;">
+                <label class="section-label-sub">Tine Variant</label>
+                <div class="variant-chips">
+                  <button type="button" class="v-chip" data-variant="5">5 Tines</button>
+                  <button type="button" class="v-chip" data-variant="7">7 Tines</button>
+                  <button type="button" class="v-chip active" data-variant="9">9 Tines</button>
+                  <button type="button" class="v-chip" data-variant="11">11 Tines</button>
+                  <button type="button" class="v-chip" data-variant="13">13 Tines</button>
+                  <button type="button" class="v-chip" data-variant="15">15 Tines</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Customer Details -->
+            <div class="form-section">
+              <label class="section-label">Customer Information</label>
+              <div class="two-col">
+                <div class="input-wrap">
+                  <span class="material-icons-round input-icon">person</span>
+                  <input type="text" id="custName" placeholder="Customer Name *" required />
+                </div>
+                <div class="input-wrap">
+                  <span class="material-icons-round input-icon">phone</span>
+                  <input type="tel" id="custPhone" placeholder="Mobile / Phone *" required />
+                </div>
+              </div>
+            </div>
+
+            <!-- Driver & Rate -->
+            <div class="form-section">
+              <label class="section-label">Driver & Billing Rate</label>
+              <div class="two-col">
+                <div class="input-wrap">
+                  <span class="material-icons-round input-icon">badge</span>
+                  <input type="text" id="driverNameInput" placeholder="Driver Name" value="Logesh K" />
+                </div>
+                <div class="input-wrap">
+                  <span class="material-icons-round input-icon">currency_rupee</span>
+                  <input type="number" id="hourlyRate" placeholder="Hourly Rate (₹) *" value="900" min="1" step="50" required />
+                </div>
+              </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="form-section">
+              <label class="section-label">Field Location / Remarks</label>
+              <div class="input-wrap">
+                <span class="material-icons-round input-icon">location_on</span>
+                <input type="text" id="jobNotes" placeholder="e.g. North Acre Field, Ploughed twice" />
+              </div>
+            </div>
+
+          </form>
+        </div>
+
+        <!-- Right Column: Live Timer & Total Calculator -->
+        <div class="glass-panel timer-panel">
+          <h2 class="panel-title">
+            <span class="material-icons-round">timer</span>
+            Work Duration Tracker
+          </h2>
+
+          <!-- Timer Status Header -->
+          <div class="timer-box">
+            <div class="timer-status" id="timerStatusPill">
+              <span class="status-dot"></span>
+              <span id="timerStatusText">Ready to start</span>
+            </div>
+
+            <div class="digital-timer" id="timerDisplay">00:00:00</div>
+
+            <!-- Start / Stop / Reset Buttons -->
+            <div class="timer-controls">
+              <button class="btn-timer btn-start" id="startTimerBtn">
+                <span class="material-icons-round">play_arrow</span>
+                <span>Start Work</span>
+              </button>
+              <button class="btn-timer btn-stop" id="stopTimerBtn" disabled>
+                <span class="material-icons-round">stop</span>
+                <span>Stop Work</span>
+              </button>
+              <button class="btn-timer-icon" id="resetTimerBtn" title="Reset Timer">
+                <span class="material-icons-round">restart_alt</span>
+              </button>
+            </div>
+
+            <div class="manual-time-row">
+              <span class="manual-label">Or enter manual duration:</span>
+              <input type="number" id="manualHours" placeholder="Hours" min="0" max="24" style="width: 70px;" />
+              <span>hrs</span>
+              <input type="number" id="manualMins" placeholder="Mins" min="0" max="59" style="width: 70px;" />
+              <span>mins</span>
+            </div>
+          </div>
+
+          <!-- Bill Summary Calculation -->
+          <div class="calculation-card">
+            <h3 class="calc-title">Live Bill Summary</h3>
+            <div class="calc-row">
+              <span>Work Type:</span>
+              <strong id="summaryWorkType">Rotavator</strong>
+            </div>
+            <div class="calc-row">
+              <span>Duration Logged:</span>
+              <strong id="summaryDuration">0 hrs 0 mins</strong>
+            </div>
+            <div class="calc-row">
+              <span>Rate per Hour:</span>
+              <strong id="summaryRate">₹900 / hr</strong>
+            </div>
+
+            <div class="holo-divider" style="margin: 12px 0;"></div>
+
+            <div class="calc-total-row">
+              <span>Total Bill:</span>
+              <span class="total-price" id="summaryTotal">₹0</span>
+            </div>
+
+            <!-- Payment Status -->
+            <div class="payment-status-picker">
+              <label>Payment Status:</label>
+              <div class="radio-group">
+                <label class="radio-pill active" id="pillPending">
+                  <input type="radio" name="payStatus" value="Pending" checked />
+                  Pending
+                </label>
+                <label class="radio-pill" id="pillPaid">
+                  <input type="radio" name="payStatus" value="Paid" />
+                  Paid
+                </label>
+              </div>
+            </div>
+
+            <!-- Save & Print Buttons -->
+            <button class="btn-save-job" id="saveJobBtn">
+              <span class="material-icons-round">receipt</span>
+              <span>Generate & Save Invoice</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         VIEW 2: WORK HISTORY / INVOICE ARCHIVE
+         ═══════════════════════════════════════════ -->
+    <section class="view-section" id="viewHistory">
+      <div class="glass-panel full-width">
+        <div class="history-header">
+          <div>
+            <h2 class="panel-title">
+              <span class="material-icons-round">history_edu</span>
+              Work History & Bill Records
+            </h2>
+            <p class="history-sub">Search, view, update payment status, and print invoices</p>
+          </div>
+
+          <!-- Filters & Search -->
+          <div class="history-controls">
+            <div class="input-wrap search-wrap">
+              <span class="material-icons-round input-icon">search</span>
+              <input type="text" id="historySearch" placeholder="Search customer or phone..." />
+            </div>
+
+            <select id="filterWorkType" class="select-filter">
+              <option value="All">All Implements</option>
+              <option value="Rotavator">Rotavator</option>
+              <option value="Spring Cultivator">Spring Cultivator</option>
+              <option value="Harvest">Harvest</option>
+              <option value="Disc Cultivator">Disc Cultivator</option>
+            </select>
+
+            <select id="filterStatus" class="select-filter">
+              <option value="All">All Status</option>
+              <option value="Pending">Pending</option>
+              <option value="Paid">Paid</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- History Table / Cards -->
+        <div class="table-container">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Invoice #</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Work Type</th>
+                <th>Duration</th>
+                <th>Rate / hr</th>
+                <th>Total (₹)</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody">
+              <!-- Dynamically Populated -->
+            </tbody>
+          </table>
+
+          <div class="empty-state" id="emptyState" style="display: none;">
+            <span class="material-icons-round empty-icon">receipt_long</span>
+            <h3>No jobs found</h3>
+            <p>Generate a bill to start tracking your tractor work history.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         VIEW 3: DRIVER & TRACTOR FLEET PROFILE
+         ═══════════════════════════════════════════ -->
+    <section class="view-section" id="viewProfile">
+      <div class="profile-grid">
+        
+        <!-- Driver Profile Card -->
+        <div class="glass-panel">
+          <h2 class="panel-title">
+            <span class="material-icons-round">badge</span>
+            Driver Profile
+          </h2>
+
+          <div class="profile-header-card">
+            <div class="profile-avatar-big">
+              <span class="material-icons-round">person</span>
+            </div>
+            <div>
+              <h3 id="profCardName">User</h3>
+              <span class="role-badge" id="profCardRole">Operator</span>
+              <p class="prof-phone" id="profCardPhone">—</p>
+            </div>
+          </div>
+
+          <form id="profileForm">
+            <div class="field-group">
+              <label class="field-label">Full Name</label>
+              <div class="input-wrap">
+                <span class="material-icons-round input-icon">person</span>
+                <input type="text" id="profName" placeholder="Full Name" required />
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Phone Number</label>
+              <div class="input-wrap">
+                <span class="material-icons-round input-icon">phone</span>
+                <input type="tel" id="profPhone" placeholder="+91 00000 00000" required />
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Email</label>
+              <div class="input-wrap">
+                <span class="material-icons-round input-icon">email</span>
+                <input type="email" id="profEmail" placeholder="your.email@example.com" required />
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Driving License #</label>
+              <div class="input-wrap">
+                <span class="material-icons-round input-icon">credit_card</span>
+                <input type="text" id="profLicense" value="TN-28-2022-0098234" />
+              </div>
+            </div>
+
+            <button type="submit" class="submit-btn" style="margin-top: 14px;">
+              <span>Update Profile</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Tractor Fleet Info Card -->
+        <div class="glass-panel">
+          <h2 class="panel-title">
+            <span class="material-icons-round">agriculture</span>
+            Tractor & Equipment Fleet
+          </h2>
+
+          <div class="fleet-card">
+            <div class="fleet-icon">
+              <span class="material-icons-round">local_shipping</span>
+            </div>
+            <div>
+              <h3>Mahindra 575 DI Sarpanch</h3>
+              <span class="status-pill-online">Operational • 45 HP</span>
+            </div>
+          </div>
+
+          <div class="fleet-stats-grid">
+            <div class="f-stat">
+              <span class="f-label">Reg. Number</span>
+              <strong class="f-value">TN 28 AB 4590</strong>
+            </div>
+            <div class="f-stat">
+              <span class="f-label">Engine Hours</span>
+              <strong class="f-value" id="fEngineHours">1,248 hrs</strong>
+            </div>
+            <div class="f-stat">
+              <span class="f-label">Fuel Level</span>
+              <strong class="f-value">84% Full</strong>
+            </div>
+            <div class="f-stat">
+              <span class="f-label">Next Service</span>
+              <strong class="f-value">In 52 hrs</strong>
+            </div>
+          </div>
+
+          <div class="holo-divider" style="margin: 20px 0;"></div>
+
+          <h3 class="calc-title">Attached Implement Tools</h3>
+          <ul class="implement-list">
+            <li>
+              <span class="material-icons-round" style="color:var(--cyan);">check_circle</span>
+              <span>11-Tine Heavy Duty Cultivator</span>
+            </li>
+            <li>
+              <span class="material-icons-round" style="color:var(--cyan);">check_circle</span>
+              <span>Shaktiman 7ft Multi-Speed Rotavator</span>
+            </li>
+            <li>
+              <span class="material-icons-round" style="color:var(--cyan);">check_circle</span>
+              <span>High-Yield Paddy Combine Harvester</span>
+            </li>
+            <li>
+              <span class="material-icons-round" style="color:var(--cyan);">check_circle</span>
+              <span>Heavy 2-Bottom Disc Plough</span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    </main>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       INVOICE MODAL (PRINTABLE)
+       ═══════════════════════════════════════════ -->
+  <div class="modal-overlay" id="invoiceModal">
+    <div class="modal-card invoice-modal-card">
+      <div class="modal-header">
+        <div class="invoice-brand">
+          <span class="material-icons-round" style="color:var(--green); font-size: 28px;">agriculture</span>
+          <div>
+            <h3>Agri-App Invoice</h3>
+            <p>Tractor Work Receipt</p>
+          </div>
+        </div>
+        <button class="modal-close" id="closeInvoiceModal">
+          <span class="material-icons-round">close</span>
+        </button>
+      </div>
+
+      <div class="invoice-body" id="printableInvoice">
+        <div class="inv-meta">
+          <div>
+            <span class="inv-label">Invoice ID:</span>
+            <strong id="invId">#INV-89234</strong>
+          </div>
+          <div>
+            <span class="inv-label">Date:</span>
+            <strong id="invDate">28 Oct</strong>
+          </div>
+        </div>
+
+        <div class="inv-section">
+          <h4>Customer Details</h4>
+          <p id="invCustomer">Ramesh Kumar (+91 94433 11223)</p>
+          <p id="invLocation" style="color: var(--text-sub); font-size: 12px; margin-top: 2px;">Field Location</p>
+        </div>
+
+        <div class="inv-section">
+          <h4>Driver & Tractor</h4>
+          <p id="invDriver">Logesh K • Mahindra 575 DI</p>
+        </div>
+
+        <table class="inv-table">
+          <thead>
+            <tr>
+              <th>Work Description</th>
+              <th>Duration</th>
+              <th>Rate / hr</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td id="invWork">Rotavator</td>
+              <td id="invDuration">2h 15m</td>
+              <td id="invRate">₹900</td>
+              <td id="invAmount">₹2,025</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="inv-total-section">
+          <div class="inv-status-pill" id="invStatusBadge">PAID</div>
+          <div class="inv-total-box">
+            <span>Grand Total:</span>
+            <strong id="invGrandTotal">₹2,025</strong>
+          </div>
+        </div>
+
+        <p class="inv-footer">Thank you for your business! Powered by Agri-App.</p>
+      </div>
+
+      <div class="invoice-actions">
+        <button class="btn-cancel" id="btnDismissInvoice">Close</button>
+        <button class="btn-primary-sm" id="btnPrintInvoice">
+          <span class="material-icons-round" style="font-size: 16px;">print</span>
+          <span>Print / PDF</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TOAST / SNACKBAR ═══ -->
+  <div class="snackbar" id="snackbar"></div>
+
+  <!-- App scripts -->
+  <script src="dashboard.js?v=2060.1"></script>
+</body>
+</html>
