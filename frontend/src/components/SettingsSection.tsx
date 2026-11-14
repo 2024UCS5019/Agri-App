@@ -33,6 +33,8 @@ import {
   MapPin,
   Cpu,
   Zap,
+  Download,
+  Smartphone,
 } from 'lucide-react';
 
 interface SettingsSectionProps {
@@ -1196,6 +1198,74 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({
               <LogOut className="w-3.5 h-3.5" />
               <span>{t.signOut}</span>
             </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ── 6. APP DOWNLOAD & OFFLINE PACKAGE ── */}
+      <div className="p-5 md:p-6 rounded-2xl bg-white dark:bg-neutral-900/60 border border-slate-200 dark:border-white/10 shadow-xs space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/5 pb-3.5">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+              <Download className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="font-sora font-bold text-sm text-slate-900 dark:text-white">
+                Download App & Client Package
+              </h2>
+              <p className="text-[11px] text-slate-500 dark:text-neutral-400">
+                Download the complete web application package or install it on your mobile device.
+              </p>
+            </div>
+          </div>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-[11px] font-semibold">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Ready for Handover</span>
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Card 1: 1-Click ZIP Download */}
+          <div className="p-4 rounded-xl bg-slate-50 dark:bg-neutral-950 border border-slate-200 dark:border-white/5 flex flex-col justify-between gap-3">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="font-sora font-bold text-xs text-slate-900 dark:text-white">
+                  Full Project ZIP (Client Ready)
+                </span>
+                <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-mono">
+                  436 KB
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-500 dark:text-neutral-400">
+                Includes full Frontend (Next.js), Backend API (Express & MongoDB), documentation, and 1-click launcher (<code className="text-emerald-600 dark:text-emerald-400">run-app.bat</code>).
+              </p>
+            </div>
+            <a
+              href="/Agri-App-Client-Ready.zip"
+              download="Agri-App-Client-Ready.zip"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-sora font-bold text-xs transition-all shadow-md shadow-emerald-600/20 active:scale-98"
+            >
+              <Download className="w-4 h-4" />
+              <span>Download Project ZIP</span>
+            </a>
+          </div>
+
+          {/* Card 2: Install App on Mobile / PC */}
+          <div className="p-4 rounded-xl bg-slate-50 dark:bg-neutral-950 border border-slate-200 dark:border-white/5 flex flex-col justify-between gap-3">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <Smartphone className="w-4 h-4 text-emerald-500" />
+                <span className="font-sora font-bold text-xs text-slate-900 dark:text-white">
+                  Install as Mobile & Desktop App
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-500 dark:text-neutral-400">
+                Install Agri-App directly onto your phone&apos;s home screen or Windows desktop. Works in full-screen with fast offline loading.
+              </p>
+            </div>
+            <div className="text-[11px] text-slate-600 dark:text-neutral-300 font-medium bg-white dark:bg-neutral-900 p-2.5 rounded-lg border border-slate-200 dark:border-white/10">
+              💡 In Chrome or Safari, tap <strong>Share</strong> or the <strong>Install</strong> icon in the address bar &rarr; choose <strong>&quot;Add to Home Screen&quot;</strong>.
+            </div>
           </div>
         </div>
       </div>

@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 export const metadata: Metadata = {
   title: "Agri-App — Tractor Bill Management & Fleet OS",
   description: "Enterprise Agri Fleet Billing, Work Ledger, and Real-Time Telemetry OS with MongoDB Atlas",
+  manifest: "/manifest.json",
 };
 
 export const viewport: Viewport = {
