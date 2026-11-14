@@ -13,6 +13,16 @@ if %errorlevel% neq 0 (
 )
 
 echo.
+if not exist "backend\node_modules" (
+    echo [Setup] Installing Backend dependencies for first run...
+    cd backend && call npm install && cd ..
+)
+
+if not exist "frontend\node_modules" (
+    echo [Setup] Installing Frontend dependencies for first run...
+    cd frontend && call npm install && cd ..
+)
+
 echo [1/2] Starting Express Backend (MongoDB Atlas)...
 start "Agri-App Backend API (:5000)" cmd /k "cd backend && npm run dev"
 
