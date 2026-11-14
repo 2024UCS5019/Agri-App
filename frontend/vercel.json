@@ -2,6 +2,6 @@
   "framework": "nextjs",
   "buildCommand": "npm run build",
   "env": {
-    "NEXT_PUBLIC_API_URL": "http://localhost:5000/api"
+    "NEXT_PUBLIC_API_URL": "https://agri-backend-olr3.onrender.com/api"
   }
 }
