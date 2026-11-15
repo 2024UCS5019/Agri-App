@@ -1,5 +1,7 @@
 import { Bill, TractorServiceConfig } from '@/types';
 import { getLocalTractorServiceConfig } from './api';
+import { jsPDF } from 'jspdf';
+import { getCleanIndianPhone, buildSmsInvoiceText } from './smsSender';
 
 export function generateInvoiceHTML(
   bill: Bill,
@@ -366,41 +368,317 @@ export function generateInvoiceHTML(
 }
 
 /**
- * Triggers the browser print dialog with the clean Times New Roman PDF invoice template.
- * Users can print or save directly as PDF.
+ * Generates an official, perfectly styled Times New Roman A4 tax invoice using jsPDF.
  */
-export function printInvoicePDF(bill: Bill, tractorModel?: string, serviceConfig?: TractorServiceConfig) {
-  const html = generateInvoiceHTML(bill, tractorModel, serviceConfig);
-  const printWindow = window.open('', '_blank', 'width=850,height=950');
-  if (printWindow) {
-    printWindow.document.open();
-    printWindow.document.write(html);
-    printWindow.document.close();
-    printWindow.focus();
-    setTimeout(() => {
-      printWindow.print();
-    }, 400);
-  } else {
-    // Fallback: create hidden iframe
-    const iframe = document.createElement('iframe');
-    iframe.style.position = 'fixed';
-    iframe.style.right = '0';
-    iframe.style.bottom = '0';
-    iframe.style.width = '0';
-    iframe.style.height = '0';
-    iframe.style.border = '0';
-    document.body.appendChild(iframe);
+export function createInvoicePDFDocument(
+  bill: Bill,
+  tractorModel: string = 'Mahindra 575 DI (45 HP)',
+  serviceConfig?: TractorServiceConfig
+): jsPDF {
+  const config = serviceConfig || getLocalTractorServiceConfig();
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-    const doc = iframe.contentWindow?.document || iframe.contentDocument;
-    if (doc) {
-      doc.open();
-      doc.write(html);
-      doc.close();
-      setTimeout(() => {
-        iframe.contentWindow?.focus();
-        iframe.contentWindow?.print();
-        setTimeout(() => document.body.removeChild(iframe), 2000);
-      }, 400);
+  // A4 dimensions: 210mm x 297mm
+  const margin = 12;
+  const contentWidth = 210 - margin * 2; // 186mm
+
+  // Outer Green Border
+  doc.setDrawColor(27, 94, 32); // #1b5e20 dark green
+  doc.setLineWidth(0.8);
+  doc.roundedRect(margin, margin, contentWidth, 273, 2, 2);
+
+  // Header Left: Enterprise Brand Title
+  doc.setFont('times', 'bold');
+  doc.setFontSize(18);
+  doc.setTextColor(27, 94, 32);
+  const brandTitle = (config.serviceName || 'TRACTOR FLEET SERVICE').toUpperCase();
+  doc.text(brandTitle, margin + 6, margin + 12);
+
+  // Subtitle / Tagline
+  doc.setFont('times', 'normal');
+  doc.setFontSize(9.5);
+  doc.setTextColor(80, 80, 80);
+  doc.text(config.tagline || 'Agricultural Machinery, Cultivation & Harvest Operations', margin + 6, margin + 17);
+
+  // Address & GST
+  doc.setFontSize(8.5);
+  doc.setTextColor(100, 100, 100);
+  const phoneStr = config.phone ? ` • Ph: ${config.phone}` : '';
+  const gstStr = config.gstin ? ` • Reg/GST: ${config.gstin}` : '';
+  doc.text(`${config.location || 'Tamil Nadu, India'}${phoneStr}${gstStr}`, margin + 6, margin + 21);
+
+  // Header Right: Bill ID & Date
+  doc.setFont('times', 'bold');
+  doc.setFontSize(14);
+  doc.setTextColor(27, 94, 32);
+  const billIdText = bill.billId ? `${bill.billId}` : '#AGRI-INV';
+  doc.text(billIdText, 210 - margin - 6, margin + 12, { align: 'right' });
+
+  doc.setFont('times', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(80, 80, 80);
+  const dateStr = bill.date || new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+  doc.text(`Date: ${dateStr}`, 210 - margin - 6, margin + 17, { align: 'right' });
+  doc.text('Official Work Invoice', 210 - margin - 6, margin + 21, { align: 'right' });
+
+  // Divider Line
+  doc.setDrawColor(27, 94, 32);
+  doc.setLineWidth(0.5);
+  doc.line(margin + 4, margin + 25, 210 - margin - 4, margin + 25);
+
+  // Two Column Information Section
+  let y = margin + 32;
+  const colWidth = (contentWidth - 12) / 2;
+
+  // Left Column: Farmer / Customer Details
+  doc.setFont('times', 'bold');
+  doc.setFontSize(9.5);
+  doc.setTextColor(27, 94, 32);
+  doc.text('FARMER / CUSTOMER DETAILS', margin + 6, y);
+  doc.setLineWidth(0.2);
+  doc.line(margin + 6, y + 1.5, margin + 6 + colWidth - 4, y + 1.5);
+
+  doc.setFont('times', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(40, 40, 40);
+
+  y += 6;
+  doc.text(`Farmer Name: ${bill.customerName || 'N/A'}`, margin + 6, y);
+  y += 5;
+  doc.text(`Mobile Number: ${bill.customerPhone || 'N/A'}`, margin + 6, y);
+  y += 5;
+  doc.text(`Field Location: ${bill.location || 'Field Site'}`, margin + 6, y);
+  y += 5;
+  doc.text(`Crop Season: ${bill.season || 'Regular Season'}`, margin + 6, y);
+
+  // Right Column: Machinery & Operator Details
+  let ry = margin + 32;
+  const rx = margin + 6 + colWidth + 4;
+  doc.setFont('times', 'bold');
+  doc.setFontSize(9.5);
+  doc.setTextColor(27, 94, 32);
+  doc.text('MACHINERY & OPERATOR', rx, ry);
+  doc.line(rx, ry + 1.5, 210 - margin - 6, ry + 1.5);
+
+  doc.setFont('times', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(40, 40, 40);
+
+  ry += 6;
+  doc.text(`Tractor Model: ${tractorModel}`, rx, ry);
+  ry += 5;
+  doc.text(`Operator/Driver: ${bill.driverName || 'Operator'}`, rx, ry);
+  ry += 5;
+  doc.text(`Work Type: ${bill.workType || 'Field Work'}${bill.variant ? ` (${bill.variant})` : ''}`, rx, ry);
+  ry += 5;
+  doc.text(`Session Status: Completed Session`, rx, ry);
+
+  // Work Breakdown Table Header
+  y = margin + 62;
+  doc.setFillColor(245, 248, 245);
+  doc.setDrawColor(27, 94, 32);
+  doc.setLineWidth(0.3);
+  doc.rect(margin + 4, y, contentWidth - 8, 8, 'FD');
+
+  doc.setFont('times', 'bold');
+  doc.setFontSize(8.5);
+  doc.setTextColor(27, 94, 32);
+  doc.text('S.NO', margin + 7, y + 5.5);
+  doc.text('DESCRIPTION OF FARM WORK', margin + 22, y + 5.5);
+  doc.text('DURATION', margin + 110, y + 5.5);
+  doc.text('RATE / HOUR', margin + 140, y + 5.5);
+  doc.text('TOTAL (INR)', 210 - margin - 7, y + 5.5, { align: 'right' });
+
+  // Table Row 1
+  y += 8;
+  doc.rect(margin + 4, y, contentWidth - 8, 14, 'D');
+
+  doc.setFont('times', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(30, 30, 30);
+  doc.text('1', margin + 8, y + 6);
+
+  doc.setFont('times', 'bold');
+  doc.text(bill.workType || 'Field Work', margin + 22, y + 6);
+  doc.setFont('times', 'normal');
+  doc.setFontSize(7.5);
+  doc.setTextColor(90, 90, 90);
+  doc.text('Agricultural tractor operational run for cultivation/harvest', margin + 22, y + 10);
+
+  doc.setFont('times', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(30, 30, 30);
+  doc.text(bill.durationFormatted || '0h 00m', margin + 110, y + 6);
+  doc.text(`Rs. ${bill.ratePerHour || 0}/hr`, margin + 140, y + 6);
+
+  const formattedAmount = new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    maximumFractionDigits: 0,
+  }).format(bill.totalAmount || 0);
+
+  doc.setFont('times', 'bold');
+  doc.text(formattedAmount, 210 - margin - 7, y + 6, { align: 'right' });
+
+  // Totals Box
+  y += 18;
+  const totBoxW = 85;
+  const totBoxX = 210 - margin - 4 - totBoxW;
+
+  // Status Badge on Left
+  const isPaid = bill.status === 'Paid';
+  doc.setDrawColor(isPaid ? 27 : 180, isPaid ? 94 : 40, isPaid ? 32 : 40);
+  doc.setLineWidth(0.3);
+  doc.setFillColor(isPaid ? 240 : 255, isPaid ? 248 : 242, isPaid ? 240 : 242);
+  doc.roundedRect(margin + 6, y + 2, 70, 14, 1.5, 1.5, 'FD');
+
+  doc.setFont('times', 'bold');
+  doc.setFontSize(8.5);
+  doc.setTextColor(isPaid ? 27 : 180, isPaid ? 94 : 40, isPaid ? 32 : 40);
+  doc.text(`Payment Settlement Status:`, margin + 9, y + 7);
+  doc.text(isPaid ? 'PAID (SETTLED)' : 'PAYMENT PENDING (DUE)', margin + 9, y + 12);
+
+  // Financial Breakdown on Right
+  doc.setDrawColor(200, 200, 200);
+  doc.rect(totBoxX, y, totBoxW, 24, 'D');
+
+  doc.setFont('times', 'normal');
+  doc.setFontSize(8.5);
+  doc.setTextColor(60, 60, 60);
+  doc.text('Subtotal Amount:', totBoxX + 4, y + 6);
+  doc.text(formattedAmount, totBoxX + totBoxW - 4, y + 6, { align: 'right' });
+
+  doc.text('Tax / Service Cess:', totBoxX + 4, y + 12);
+  doc.text('Rs. 0.00', totBoxX + totBoxW - 4, y + 12, { align: 'right' });
+
+  doc.setDrawColor(27, 94, 32);
+  doc.line(totBoxX + 2, y + 15, totBoxX + totBoxW - 2, y + 15);
+
+  doc.setFont('times', 'bold');
+  doc.setFontSize(10.5);
+  doc.setTextColor(27, 94, 32);
+  doc.text('Grand Total:', totBoxX + 4, y + 20.5);
+  doc.text(formattedAmount, totBoxX + totBoxW - 4, y + 20.5, { align: 'right' });
+
+  // Note to Customer
+  y += 32;
+  doc.setFillColor(250, 252, 250);
+  doc.setDrawColor(27, 94, 32);
+  doc.setLineWidth(0.2);
+  doc.rect(margin + 4, y, contentWidth - 8, 14, 'FD');
+
+  doc.setFont('times', 'bold');
+  doc.setFontSize(8);
+  doc.setTextColor(27, 94, 32);
+  doc.text('Note to Customer:', margin + 7, y + 5);
+
+  doc.setFont('times', 'normal');
+  doc.setFontSize(8);
+  doc.setTextColor(60, 60, 60);
+  const noteText = config.customerDescription || 'Thank you for partnering with our Tractor Fleet! Official digital tax invoice and field service record.';
+  const splitNote = doc.splitTextToSize(noteText, contentWidth - 36);
+  doc.text(splitNote, margin + 31, y + 5);
+
+  // Signatures
+  y += 38;
+  doc.setDrawColor(120, 120, 120);
+  doc.setLineWidth(0.3);
+
+  // Left Signature: Farmer
+  doc.line(margin + 10, y, margin + 70, y);
+  doc.setFont('times', 'normal');
+  doc.setFontSize(8.5);
+  doc.setTextColor(60, 60, 60);
+  doc.text('Farmer / Customer Signature', margin + 40, y + 4.5, { align: 'center' });
+
+  // Right Signature: Enterprise
+  const rightSigX = 210 - margin - 40;
+  doc.setFont('times', 'bold');
+  doc.setFontSize(9.5);
+  doc.setTextColor(27, 94, 32);
+  doc.text(config.serviceName || 'Tractor Service', rightSigX, y - 2, { align: 'center' });
+  doc.line(210 - margin - 70, y, 210 - margin - 10, y);
+  doc.setFont('times', 'normal');
+  doc.setFontSize(8.5);
+  doc.setTextColor(60, 60, 60);
+  doc.text('Authorized Signatory / Seal', rightSigX, y + 4.5, { align: 'center' });
+
+  // Bottom Notice
+  y += 18;
+  doc.setFont('times', 'italic');
+  doc.setFontSize(7.5);
+  doc.setTextColor(120, 120, 120);
+  doc.text(
+    `This is a verified computer-generated tax invoice issued by ${config.serviceName || 'Tractor Fleet'}. Times New Roman Official Format.`,
+    105,
+    y,
+    { align: 'center' }
+  );
+
+  return doc;
+}
+
+/**
+ * Directly downloads the real PDF file to the user's mobile device or desktop.
+ * Does NOT open the browser print dialog.
+ */
+export function downloadInvoicePDF(
+  bill: Bill,
+  tractorModel?: string,
+  serviceConfig?: TractorServiceConfig
+): jsPDF {
+  const doc = createInvoicePDFDocument(bill, tractorModel, serviceConfig);
+  const safeId = (bill.billId || 'INV-AGRI').replace('#', '');
+  const safeCustomer = (bill.customerName || 'Customer').replace(/[^a-zA-Z0-9]/g, '_');
+  const fileName = `Invoice_${safeId}_${safeCustomer}.pdf`;
+  doc.save(fileName);
+  return doc;
+}
+
+/**
+ * 1-Click WhatsApp Handler:
+ * 1. Automatically downloads the PDF file to the phone.
+ * 2. Directly opens WhatsApp with the recipient phone number, clean formatted invoice,
+ *    and attaches the PDF file via native Web Share API where supported.
+ */
+export async function shareInvoiceViaWhatsApp(
+  bill: Bill,
+  tractorModel?: string,
+  serviceConfig?: TractorServiceConfig
+): Promise<void> {
+  const config = serviceConfig || getLocalTractorServiceConfig();
+  // 1. Trigger automatic download of the PDF
+  const doc = downloadInvoicePDF(bill, tractorModel, config);
+  const safeId = (bill.billId || 'INV-AGRI').replace('#', '');
+  const safeCustomer = (bill.customerName || 'Customer').replace(/[^a-zA-Z0-9]/g, '_');
+  const fileName = `Invoice_${safeId}_${safeCustomer}.pdf`;
+
+  // 2. Prepare formatted invoice text
+  const { national10 } = getCleanIndianPhone(bill.customerPhone || '');
+  const text = buildSmsInvoiceText(bill, tractorModel, config);
+
+  // 3. If native file sharing is available on mobile, share PDF directly
+  if (typeof navigator !== 'undefined' && typeof window !== 'undefined') {
+    try {
+      const pdfBlob = doc.output('blob');
+      const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: `${config.serviceName || 'Tractor Service'} Invoice`,
+          text: text,
+          files: [file],
+        });
+        return;
+      }
+    } catch {
+      // User dismissed share sheet or fallback to direct WhatsApp URL
     }
+
+    // 4. Direct WhatsApp link fallback with pre-filled message & phone
+    const encoded = encodeURIComponent(text);
+    const url = national10.length === 10
+      ? `https://wa.me/91${national10}?text=${encoded}`
+      : `https://wa.me/?text=${encoded}`;
+    window.open(url, '_blank');
   }
 }

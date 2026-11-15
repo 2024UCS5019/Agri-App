@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Bill, TractorServiceConfig } from '@/types';
-import { printInvoicePDF } from '@/lib/pdfGenerator';
+import { downloadInvoicePDF, shareInvoiceViaWhatsApp } from '@/lib/pdfGenerator';
 import { getLocalTractorServiceConfig, billsAPI } from '@/lib/api';
 import { buildSmsInvoiceText, dispatchCustomerSMS, getCleanIndianPhone } from '@/lib/smsSender';
 import {
@@ -79,54 +79,41 @@ export const ShareInvoiceModal: React.FC<ShareInvoiceModalProps> = ({
     addToast?.(`📱 Dispatched official SMS invoice to ${bill.customerName} (${formattedDisplay || bill.customerPhone || 'N/A'})!`, 'success');
   };
 
-  // WhatsApp share: auto-generates PDF + opens WhatsApp with clean message
-  const handleShareWhatsApp = () => {
-    // 1. Auto-generate official PDF
-    printInvoicePDF(bill, tractorModel, serviceConfig);
-
-    // 2. Open WhatsApp with prefilled clean text to exact national 10 digit number
-    setTimeout(() => {
-      const encoded = encodeURIComponent(formattedInvoiceText);
-      const url = national10.length === 10
-        ? `https://wa.me/91${national10}?text=${encoded}`
-        : `https://wa.me/?text=${encoded}`;
-      window.open(url, '_blank');
-    }, 250);
-
-    addToast?.(`📄 Generated PDF Invoice & opening WhatsApp for ${bill.customerName}...`, 'success');
+  // WhatsApp share: auto-downloads PDF directly + opens WhatsApp with clean message & attachment
+  const handleShareWhatsApp = async () => {
+    try {
+      await shareInvoiceViaWhatsApp(bill, tractorModel, serviceConfig);
+      addToast?.(`📄 Downloaded PDF Invoice & opening WhatsApp for ${bill.customerName}...`, 'success');
+    } catch {
+      addToast?.(`Opened WhatsApp for ${bill.customerName}`, 'info');
+    }
   };
 
-  // Instagram share: auto-generates PDF + copies text + opens Instagram Direct
+  // Instagram share: auto-downloads PDF + copies text + opens Instagram Direct
   const handleShareInstagram = () => {
-    // 1. Auto-generate official PDF
-    printInvoicePDF(bill, tractorModel, serviceConfig);
-
-    // 2. Copy invoice details to clipboard
+    downloadInvoicePDF(bill, tractorModel, serviceConfig);
     navigator.clipboard.writeText(formattedInvoiceText);
     setCopied(true);
     setTimeout(() => setCopied(false), 3000);
 
-    // 3. Open Instagram Direct
     setTimeout(() => {
       window.open('https://www.instagram.com/direct/inbox/', '_blank');
     }, 250);
 
-    addToast?.('📄 Generated PDF Invoice & opening Instagram Direct (invoice text copied)!', 'success');
+    addToast?.('📄 Downloaded PDF Invoice & opening Instagram Direct (invoice text copied)!', 'success');
   };
 
-  // Email share: auto-generates PDF + opens mailto client
+  // Email share: auto-downloads PDF + opens mailto client
   const handleShareEmail = () => {
-    // 1. Auto-generate official PDF
-    printInvoicePDF(bill, tractorModel, serviceConfig);
+    downloadInvoicePDF(bill, tractorModel, serviceConfig);
 
-    // 2. Open mail client
     setTimeout(() => {
       const subject = encodeURIComponent(`${serviceConfig.serviceName || 'Tractor Work Invoice'}: ${bill.billId || '#AGRI-INV'} - ${bill.customerName}`);
       const body = encodeURIComponent(formattedInvoiceText);
       window.location.href = `mailto:?subject=${subject}&body=${body}`;
     }, 250);
 
-    addToast?.('📄 Generated PDF Invoice & opening Email client...', 'info');
+    addToast?.('📄 Downloaded PDF Invoice & opening Email client...', 'info');
   };
 
   // Save Invoice (Saves invoice record to database & work history only — does not generate/print PDF, then automatically returns to main page)

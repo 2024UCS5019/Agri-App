@@ -4,10 +4,12 @@ import React, { useEffect, useState } from 'react';
 import { Bill, TractorServiceConfig } from '@/types';
 import { useLanguage } from '@/context/LanguageContext';
 import { getLocalTractorServiceConfig } from '@/lib/api';
+import { downloadInvoicePDF, shareInvoiceViaWhatsApp } from '@/lib/pdfGenerator';
 import {
   X,
   Printer,
   Share2,
+  Download,
   CheckCircle2,
   AlertCircle,
   Truck,
@@ -53,32 +55,12 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({ bill, onClose }) => 
 
   const isPaid = bill.status === 'Paid';
 
-  const handlePrint = () => {
-    window.print();
+  const handleDownloadPDF = () => {
+    downloadInvoicePDF(bill, undefined, serviceConfig);
   };
 
-  const shareWhatsApp = () => {
-    const sName = serviceConfig.serviceName || 'Tractor Fleet';
-    const text = `🚜 *${sName.toUpperCase()} - WORK INVOICE*\n` +
-      `Bill ID: ${bill.billId}\n` +
-      `Farmer: ${bill.customerName}\n` +
-      `Phone: ${bill.customerPhone || 'N/A'}\n` +
-      `Implement: ${bill.workType} ${bill.variant || ''}\n` +
-      (bill.season ? `Season: ${bill.season}\n` : '') +
-      (bill.location ? `Location: ${bill.location}\n` : '') +
-      `Duration: ${bill.durationFormatted}\n` +
-      `Rate: ₹${bill.ratePerHour}/hr\n` +
-      `Total: ${formatCurrency(bill.totalAmount)}\n` +
-      `Status: *${bill.status}*\n` +
-      `Driver: ${bill.driverName || 'Logesh M'}\n` +
-      `----------------------------------------\n` +
-      `${serviceConfig.customerDescription}\n` +
-      `Thank you for choosing ${sName}!`;
-
-    const encoded = encodeURIComponent(text);
-    const phone = bill.customerPhone ? bill.customerPhone.replace(/[^0-9]/g, '') : '';
-    const url = phone ? `https://wa.me/91${phone}?text=${encoded}` : `https://wa.me/?text=${encoded}`;
-    window.open(url, '_blank');
+  const shareWhatsApp = async () => {
+    await shareInvoiceViaWhatsApp(bill, undefined, serviceConfig);
   };
 
   return (
@@ -101,19 +83,27 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({ bill, onClose }) => 
           <div className="flex items-center gap-2">
             <button
               onClick={shareWhatsApp}
-              className="p-1.5 sm:p-2 rounded-xl bg-white hover:bg-slate-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-emerald-700 dark:text-emerald-400 hover:text-emerald-600 dark:hover:text-emerald-300 border border-slate-200 dark:border-transparent transition-all text-xs flex items-center gap-1.5 shadow-sm"
-              title="Share on WhatsApp"
+              className="p-1.5 sm:p-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-all text-xs flex items-center gap-1.5 shadow-sm shadow-emerald-600/20 active:scale-98"
+              title="Download PDF & Share to WhatsApp"
             >
               <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline">{t.shareWhatsApp}</span>
+              <span>WhatsApp PDF</span>
             </button>
             <button
-              onClick={handlePrint}
-              className="p-1.5 sm:p-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-bold transition-all text-xs flex items-center gap-1.5 shadow-md shadow-emerald-500/20"
-              title="Print Receipt / Save as PDF"
+              onClick={handleDownloadPDF}
+              className="p-1.5 sm:p-2 rounded-xl bg-white hover:bg-slate-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-slate-800 dark:text-neutral-200 border border-slate-200 dark:border-white/10 font-bold transition-all text-xs flex items-center gap-1.5 shadow-sm active:scale-98"
+              title="Download official PDF file directly to device"
+            >
+              <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-500" />
+              <span>Download PDF</span>
+            </button>
+            <button
+              onClick={() => window.print()}
+              className="hidden sm:flex p-1.5 sm:p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-slate-700 dark:text-neutral-300 font-medium transition-all text-xs items-center gap-1.5"
+              title="Print Receipt"
             >
               <Printer className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span>{t.printPdf}</span>
+              <span>Print</span>
             </button>
             <button
               onClick={onClose}
