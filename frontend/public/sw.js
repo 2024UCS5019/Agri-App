@@ -1,8 +1,11 @@
 // Agri-App Service Worker for Offline PWA Support & PWABuilder Android APK
-const CACHE_NAME = 'agri-app-v1';
+const CACHE_NAME = 'agri-app-v3';
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',
+  '/icons/app-logo-192.png?v=3',
+  '/icons/app-logo-512.png?v=3',
+  '/icons/app-logo-maskable-512.png?v=3',
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png',
   '/icons/icon-512x512-maskable.png',
