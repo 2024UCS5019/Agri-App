@@ -3,5 +3,24 @@
   "buildCommand": "npm run build",
   "env": {
     "NEXT_PUBLIC_API_URL": "https://agri-backend-olr3.onrender.com/api"
-  }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "X-Requested-With, Content-Type, Authorization, Accept"
+        }
+      ]
+    }
+  ]
 }
