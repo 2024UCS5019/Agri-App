@@ -1163,14 +1163,14 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-sora font-bold text-sm text-slate-900 dark:text-white">
-                  {currentUser?.name || 'Logesh M'}
+                  {currentUser?.name || 'Tractor Operator'}
                 </h3>
                 <span className="px-2 py-0.2 rounded-md bg-emerald-500/20 text-[#1fa85a] dark:text-[#6df59a] text-[10px] font-bold uppercase">
                   {currentUser?.role === 'Owner' ? 'Tractor Owner' : 'Tractor Driver'}
                 </span>
               </div>
               <p className="text-[11px] text-slate-500 dark:text-neutral-400 mt-0.5">
-                {currentUser?.email || 'logeshmuthu2004@gmail.com'}
+                {currentUser?.email || ''}
               </p>
               <p className="text-[10px] text-slate-400 dark:text-neutral-500 font-mono mt-0.5">
                 Phone: {currentUser?.phone || '+91 94433 88123'}
