@@ -147,74 +147,8 @@ export const AnimatedTractorLogo: React.FC<AnimatedTractorLogoProps> = ({
  * - Auto-transitions into app after ~1.4s (or tap to skip)
  */
 export const AppSplashScreen: React.FC<{ onComplete?: () => void }> = ({ onComplete }) => {
-  const [visible, setVisible] = useState(true);
-  const [fading, setFading] = useState(false);
-
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setFading(true);
-      setTimeout(() => {
-        setVisible(false);
-        onComplete?.();
-      }, 450); // 450ms smooth fade transition
-    }, 1400); // 1.4s 2060 intro duration
-
-    return () => clearTimeout(timer);
+    onComplete?.();
   }, [onComplete]);
-
-  if (!visible) return null;
-
-  return (
-    <div
-      onClick={() => {
-        setFading(true);
-        setTimeout(() => setVisible(false), 200);
-      }}
-      className={`fixed inset-0 z-[9999] bg-[#050811] flex flex-col items-center justify-center p-6 select-none transition-opacity duration-450 cursor-pointer overflow-hidden ${
-        fading ? 'opacity-0 pointer-events-none' : 'opacity-100'
-      }`}
-      title="Tap anywhere to skip"
-    >
-      {/* Background Deep Space Ambient Nebula */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] bg-gradient-to-tr from-emerald-500/15 via-teal-500/10 to-cyan-500/15 rounded-full blur-[110px] pointer-events-none" />
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[260px] h-[260px] bg-emerald-400/20 rounded-full blur-[70px] pointer-events-none animate-pulse" />
-
-      {/* 2060 Central Emblem Section */}
-      <div className="relative mb-6 flex items-center justify-center animate-cyber-float">
-        {/* Outer Orbital Ring 1: Clockwise Dashed Cyan HUD */}
-        <div className="absolute w-[220px] h-[220px] rounded-full border border-dashed border-cyan-400/30 animate-hud-cw pointer-events-none" />
-
-        {/* Outer Orbital Ring 2: Counter-Clockwise Dotted Emerald HUD */}
-        <div className="absolute w-[185px] h-[185px] rounded-full border border-dotted border-emerald-400/35 animate-hud-ccw pointer-events-none" />
-
-        {/* Radar Wave Pulse */}
-        <div className="absolute w-[155px] h-[155px] rounded-full border border-emerald-400/30 animate-ping opacity-30 pointer-events-none [animation-duration:3s]" />
-
-        {/* Orbital HUD Telemetry Nodes */}
-        <div className="absolute w-[220px] h-[220px] animate-hud-cw pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#38bdf8]" />
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
-        </div>
-
-        {/* Central 2060 Circular Tractor Emblem (Matching user image) */}
-        <div className="relative z-10 drop-shadow-[0_0_35px_rgba(16,185,129,0.45)]">
-          <AnimatedTractorLogo size="2060" showGlow={false} />
-        </div>
-      </div>
-
-      {/* Brand Title: Exactly "Agri-App" Matching User Image */}
-      <div className="relative z-10 text-center mb-6">
-        <h1 className="font-sora font-black text-3xl sm:text-4xl tracking-tight text-white flex items-center justify-center">
-          <span className="bg-gradient-to-r from-emerald-400 via-teal-200 to-cyan-400 bg-clip-text text-transparent animate-text-shimmer drop-shadow-[0_0_20px_rgba(16,185,129,0.5)] select-none">
-            Agri-App
-          </span>
-        </h1>
-      </div>
-
-      {/* 2060 Futuristic Laser Charge Progress Bar */}
-      <div className="relative z-10 w-40 h-1 bg-white/10 rounded-full overflow-hidden border border-white/5">
-        <div className="absolute inset-y-0 left-0 bg-gradient-to-r from-emerald-500 via-teal-300 to-cyan-400 rounded-full w-full animate-[progress_1.2s_cubic-bezier(0.4,0,0.2,1)_infinite]" />
-      </div>
-    </div>
-  );
+  return null;
 };
