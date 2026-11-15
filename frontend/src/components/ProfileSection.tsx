@@ -8,7 +8,7 @@ import { LanguageSwitcher } from './LanguageSwitcher';
 import {
   User as UserIcon,
   Shield,
-  Truck,
+  Tractor,
   Phone,
   Mail,
   FileText,
@@ -252,7 +252,7 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
                     {t.assignedTractor}
                   </label>
                   <div className="relative">
-                    <Truck className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-neutral-400" />
+                    <Tractor className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-neutral-400" />
                     <input
                       type="text"
                       value={tractorModel}
@@ -325,7 +325,7 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
             <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/5 pb-4">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                  <Truck className="w-5 h-5" />
+                  <Tractor className="w-5 h-5" />
                 </div>
                 <div>
                   <h4 className="text-base font-bold text-slate-900 dark:text-white">Mahindra 575 DI</h4>

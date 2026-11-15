@@ -8,8 +8,9 @@ import { useTheme } from '@/context/ThemeContext';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { LeafRingLoader } from '@/components/LeafRingLoader';
 import { GoogleAuthChooser } from '@/components/GoogleAuthChooser';
+import { AnimatedTractorLogo } from '@/components/AnimatedTractorLogo';
 import {
-  Truck,
+  Tractor,
   Mail,
   Lock,
   User as UserIcon,
@@ -140,11 +141,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       {/* Top Header */}
       <header className="relative z-10 w-full max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 p-[1.5px] shadow-lg shadow-emerald-500/20">
-            <div className="w-full h-full bg-white dark:bg-[#080c14] rounded-[14px] flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-              <Truck className="w-5 h-5" />
-            </div>
-          </div>
+          <AnimatedTractorLogo size="sm" showGlow={false} />
           <div>
             <h1 className="font-sora font-extrabold text-base text-slate-900 dark:text-white tracking-tight">
               {t.appTitle}

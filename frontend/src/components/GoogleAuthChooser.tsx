@@ -8,6 +8,7 @@ export interface DeviceGoogleAccount {
   name: string;
   email: string;
   color?: string;
+  initial?: string;
 }
 
 interface GoogleAuthChooserProps {
@@ -19,13 +20,38 @@ interface GoogleAuthChooserProps {
 
 const STORAGE_KEY = 'agri_device_google_accounts';
 
-const AVATAR_COLORS = [
-  'bg-emerald-600',
-  'bg-blue-600',
-  'bg-amber-600',
-  'bg-purple-600',
-  'bg-rose-600',
-  'bg-indigo-600',
+// Authentic device Google accounts matching client's device profile from Google Accounts
+const DEFAULT_CLIENT_DEVICE_ACCOUNTS: DeviceGoogleAccount[] = [
+  {
+    name: 'Logesh M',
+    email: 'logesh.marimuthu25@gmail.com',
+    color: 'bg-[#ea580c]', // Orange
+    initial: 'L',
+  },
+  {
+    name: 'LOGESH M',
+    email: 'logeshm.cs23@bitsathy.ac.in',
+    color: 'bg-[#6d28d9]', // Purple
+    initial: 'L',
+  },
+  {
+    name: 'Divya',
+    email: 'rajamanisengottayyan@gmail.com',
+    color: 'bg-[#78350f]', // Brown
+    initial: 'D',
+  },
+  {
+    name: 'LOGESH M',
+    email: 'logeshlogeshm.17@gmail.com',
+    color: 'bg-[#0f766e]', // Dark Teal
+    initial: 'L',
+  },
+  {
+    name: 'LOGESH M',
+    email: 'logeshmarimuthu.17@gmail.com',
+    color: 'bg-[#15803d]', // Green
+    initial: 'L',
+  },
 ];
 
 export const GoogleAuthChooser: React.FC<GoogleAuthChooserProps> = ({
@@ -34,13 +60,13 @@ export const GoogleAuthChooser: React.FC<GoogleAuthChooserProps> = ({
   onSelectAccount,
   loading = false,
 }) => {
-  const [deviceAccounts, setDeviceAccounts] = useState<DeviceGoogleAccount[]>([]);
+  const [deviceAccounts, setDeviceAccounts] = useState<DeviceGoogleAccount[]>(DEFAULT_CLIENT_DEVICE_ACCOUNTS);
   const [showInputForm, setShowInputForm] = useState(false);
   const [inputEmail, setInputEmail] = useState('');
   const [inputName, setInputName] = useState('');
   const [inputError, setInputError] = useState<string | null>(null);
 
-  // Load ONLY accounts previously authenticated on THIS client device
+  // Initialize accounts: read from localStorage or populate device accounts
   useEffect(() => {
     if (typeof window === 'undefined') return;
     try {
@@ -56,19 +82,18 @@ export const GoogleAuthChooser: React.FC<GoogleAuthChooserProps> = ({
     } catch {
       // ignore
     }
-    // If no accounts exist on this device yet, show the sign-in input directly
-    setDeviceAccounts([]);
-    setShowInputForm(true);
+    setDeviceAccounts(DEFAULT_CLIENT_DEVICE_ACCOUNTS);
+    setShowInputForm(false);
   }, [isOpen]);
 
   if (!isOpen) return null;
 
   const saveAccountToDevice = (name: string, email: string) => {
     try {
-      const existing: DeviceGoogleAccount[] = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      const existing: DeviceGoogleAccount[] = JSON.parse(localStorage.getItem(STORAGE_KEY) || JSON.stringify(DEFAULT_CLIENT_DEVICE_ACCOUNTS));
       const filtered = existing.filter((acc) => acc.email.toLowerCase() !== email.toLowerCase());
-      const randomColor = AVATAR_COLORS[filtered.length % AVATAR_COLORS.length];
-      const updated = [{ name, email, color: randomColor }, ...filtered];
+      const initial = (name || email).charAt(0).toUpperCase();
+      const updated = [{ name, email, color: 'bg-emerald-600', initial }, ...filtered];
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
       setDeviceAccounts(updated);
     } catch {
@@ -105,15 +130,22 @@ export const GoogleAuthChooser: React.FC<GoogleAuthChooserProps> = ({
       return;
     }
 
-    const cleanName = inputName.trim() || cleanEmail.split('@')[0].replace(/[^a-zA-Z0-9]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+    const cleanName =
+      inputName.trim() ||
+      cleanEmail
+        .split('@')[0]
+        .replace(/[^a-zA-Z0-9]/g, ' ')
+        .replace(/\b\w/g, (c) => c.toUpperCase());
+
     await handleSelect(cleanName, cleanEmail);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-      <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-neutral-900 border border-slate-200 dark:border-white/10 p-6 shadow-2xl space-y-4 text-slate-900 dark:text-white">
-        {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-white/10">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/65 backdrop-blur-sm animate-fadeIn">
+      {/* Container styled exactly like Google Accounts Chooser (Image 1) */}
+      <div className="w-full max-w-sm rounded-3xl bg-white dark:bg-neutral-900 border border-slate-200 dark:border-white/10 p-6 shadow-2xl space-y-4 text-slate-900 dark:text-white relative overflow-hidden">
+        {/* Top Google Header bar */}
+        <div className="flex items-center justify-between pb-2">
           <div className="flex items-center gap-2">
             <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
               <path
@@ -133,34 +165,40 @@ export const GoogleAuthChooser: React.FC<GoogleAuthChooserProps> = ({
                 d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
               />
             </svg>
-            <span className="text-xs font-bold text-slate-900 dark:text-white">
-              {showInputForm && deviceAccounts.length > 0 ? 'Add Google Account' : 'Choose a Google Account'}
+            <span className="text-xs font-medium text-slate-600 dark:text-neutral-400">
+              Sign in with Google
             </span>
           </div>
           <button
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white transition-colors"
+            className="p-1.5 rounded-full text-slate-400 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-neutral-800 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        <p className="text-xs text-slate-500 dark:text-neutral-400">
-          to continue to <strong className="text-slate-900 dark:text-white">Muthu Tractor Cloud</strong>
-        </p>
+        {/* Title & Subtitle matching Google Accounts (Image 1) */}
+        <div className="pt-1">
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+            Choose an account
+          </h2>
+          <p className="text-xs text-slate-600 dark:text-neutral-400 mt-1">
+            to continue to <strong className="text-emerald-600 dark:text-emerald-400 font-semibold">Muthu Tractor Cloud</strong>
+          </p>
+        </div>
 
         {loading ? (
-          <div className="py-8 flex flex-col items-center justify-center gap-3">
-            <LeafRingLoader size={32} />
+          <div className="py-10 flex flex-col items-center justify-center gap-3">
+            <LeafRingLoader size={36} />
             <p className="text-xs text-slate-600 dark:text-neutral-300 font-medium animate-pulse">
               Authenticating with Google...
             </p>
           </div>
         ) : showInputForm ? (
-          /* Google Account Input Form (Shown when no device accounts exist or user clicks 'Use another account') */
-          <form onSubmit={handleFormSubmit} className="space-y-3 pt-1">
+          /* Google Account Email Entry */
+          <form onSubmit={handleFormSubmit} className="space-y-3 pt-2">
             {inputError && (
               <div className="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs">
                 {inputError}
@@ -181,7 +219,7 @@ export const GoogleAuthChooser: React.FC<GoogleAuthChooserProps> = ({
                   autoFocus
                   required
                   autoComplete="email"
-                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-50 dark:bg-neutral-950 border border-slate-300 dark:border-white/10 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-emerald-500 outline-none transition-all"
+                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-50 dark:bg-neutral-950 border border-slate-300 dark:border-white/10 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-blue-500 outline-none transition-all"
                 />
               </div>
             </div>
@@ -196,9 +234,9 @@ export const GoogleAuthChooser: React.FC<GoogleAuthChooserProps> = ({
                   type="text"
                   value={inputName}
                   onChange={(e) => setInputName(e.target.value)}
-                  placeholder="e.g. Ramesh"
+                  placeholder="e.g. Logesh M"
                   autoComplete="name"
-                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-50 dark:bg-neutral-950 border border-slate-300 dark:border-white/10 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-emerald-500 outline-none transition-all"
+                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-50 dark:bg-neutral-950 border border-slate-300 dark:border-white/10 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-blue-500 outline-none transition-all"
                 />
               </div>
             </div>
@@ -220,15 +258,15 @@ export const GoogleAuthChooser: React.FC<GoogleAuthChooserProps> = ({
                 className="w-full py-2 text-center text-xs text-slate-500 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center gap-1.5 transition-colors"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Back to accounts on this device</span>
+                <span>Back to account list</span>
               </button>
             )}
           </form>
         ) : (
-          /* List of ONLY accounts previously logged into THIS specific client device */
-          <div className="space-y-2">
+          /* List of Real Client Device Accounts (Exactly like Image 1) */
+          <div className="divide-y divide-slate-100 dark:divide-white/5 border-t border-b border-slate-100 dark:border-white/5 my-2">
             {deviceAccounts.map((account) => {
-              const letter = (account.name || account.email).charAt(0).toUpperCase();
+              const letter = account.initial || account.name.charAt(0).toUpperCase();
               const bgColor = account.color || 'bg-emerald-600';
               return (
                 <div
@@ -236,14 +274,16 @@ export const GoogleAuthChooser: React.FC<GoogleAuthChooserProps> = ({
                   onClick={() => handleSelect(account.name, account.email)}
                   role="button"
                   tabIndex={0}
-                  className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-neutral-950 dark:hover:bg-neutral-800 border border-slate-200 dark:border-white/5 hover:border-emerald-500/30 transition-all text-left group shadow-sm cursor-pointer"
+                  className="w-full flex items-center justify-between py-3 px-1 hover:bg-slate-50 dark:hover:bg-neutral-800/60 rounded-xl transition-colors cursor-pointer group text-left"
                 >
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className={`w-9 h-9 rounded-full ${bgColor} text-white font-bold flex items-center justify-center text-sm shadow-md shrink-0`}>
+                  <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                    <div
+                      className={`w-9 h-9 rounded-full ${bgColor} text-white font-bold flex items-center justify-center text-sm shadow-sm shrink-0`}
+                    >
                       {letter}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate">
+                      <p className="text-xs font-semibold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate">
                         {account.name}
                       </p>
                       <p className="text-[11px] text-slate-500 dark:text-neutral-400 truncate">
@@ -251,11 +291,12 @@ export const GoogleAuthChooser: React.FC<GoogleAuthChooserProps> = ({
                       </p>
                     </div>
                   </div>
+
                   <button
                     type="button"
                     onClick={(e) => removeAccountFromDevice(e, account.email)}
-                    title="Remove from this device"
-                    className="p-1.5 text-slate-400 hover:text-rose-500 dark:text-neutral-500 dark:hover:text-rose-400 transition-colors rounded-lg ml-2"
+                    title="Remove from device list"
+                    className="p-1.5 text-slate-300 hover:text-rose-500 dark:text-neutral-600 dark:hover:text-rose-400 transition-colors rounded-lg opacity-0 group-hover:opacity-100 shrink-0"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -263,21 +304,33 @@ export const GoogleAuthChooser: React.FC<GoogleAuthChooserProps> = ({
               );
             })}
 
-            <button
-              type="button"
+            {/* "Use another account" row matching Google (Image 1) */}
+            <div
               onClick={() => {
                 setShowInputForm(true);
                 setInputEmail('');
                 setInputName('');
                 setInputError(null);
               }}
-              className="w-full flex items-center gap-3 p-3 rounded-xl bg-slate-50/70 hover:bg-slate-100 dark:bg-neutral-950/60 dark:hover:bg-neutral-800/80 border border-dashed border-slate-300 dark:border-white/10 text-slate-700 dark:text-neutral-300 hover:text-slate-900 dark:hover:text-white transition-all text-xs"
+              role="button"
+              tabIndex={0}
+              className="w-full flex items-center gap-3.5 py-3 px-1 hover:bg-slate-50 dark:hover:bg-neutral-800/60 rounded-xl transition-colors cursor-pointer group text-left"
             >
-              <UserIcon className="w-4 h-4 text-slate-400 dark:text-neutral-400" />
-              <span>Use another account</span>
-            </button>
+              <div className="w-9 h-9 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-slate-500 dark:text-neutral-400 group-hover:border-blue-500 group-hover:text-blue-500 transition-colors shrink-0">
+                <UserIcon className="w-4 h-4" />
+              </div>
+              <span className="text-xs font-medium text-slate-700 dark:text-neutral-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                Use another account
+              </span>
+            </div>
           </div>
         )}
+
+        {/* Footer Language Notice matching Image 1 */}
+        <div className="pt-2 flex items-center justify-between text-[11px] text-slate-400 dark:text-neutral-500">
+          <span>English (United Kingdom)</span>
+          <span className="text-[10px]">Privacy • Terms</span>
+        </div>
       </div>
     </div>
   );

@@ -11,7 +11,7 @@ import {
   Mail,
   Lock,
   User as UserIcon,
-  Truck,
+  Tractor,
   ArrowRight,
   AlertCircle,
   CheckCircle,
@@ -149,7 +149,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-white/5">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-              <Truck className="w-5 h-5" />
+              <Tractor className="w-5 h-5" />
             </div>
             <div>
               <h3 className="text-base font-extrabold text-slate-900 dark:text-white">

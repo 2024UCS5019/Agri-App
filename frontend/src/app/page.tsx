@@ -25,6 +25,7 @@ import { ManageDriversSection } from '@/components/ManageDriversSection';
 import { SettingsSection } from '@/components/SettingsSection';
 import { OwnerDashboardSection } from '@/components/OwnerDashboardSection';
 import { ProfilePopupModal } from '@/components/ProfilePopupModal';
+import { AnimatedTractorLogo, AppSplashScreen } from '@/components/AnimatedTractorLogo';
 import { useLanguage } from '@/context/LanguageContext';
 import {
   Menu,
@@ -477,17 +478,20 @@ export default function Home() {
   // Full-page centered loader while validating session (Example 1)
   if (!authChecked) {
     return (
-      <div className="min-h-screen w-full flex flex-col items-center justify-center bg-slate-100 dark:bg-neutral-950 text-slate-900 dark:text-neutral-100 p-6 transition-colors duration-200">
-        <LeafRingLoader size={75} ariaLabel="Preparing your fields" />
-        <div className="mt-6 text-center space-y-1.5 font-sora">
-          <h3 className="font-semibold text-lg text-slate-900 dark:text-neutral-100 tracking-tight">
-            Preparing your fields
-          </h3>
-          <p className="text-xs text-slate-500 dark:text-neutral-400">
-            Syncing telemetry & machinery coordinates...
-          </p>
+      <>
+        <AppSplashScreen />
+        <div className="min-h-screen w-full flex flex-col items-center justify-center bg-slate-100 dark:bg-neutral-950 text-slate-900 dark:text-neutral-100 p-6 transition-colors duration-200">
+          <LeafRingLoader size={75} ariaLabel="Preparing your fields" />
+          <div className="mt-6 text-center space-y-1.5 font-sora">
+            <h3 className="font-semibold text-lg text-slate-900 dark:text-neutral-100 tracking-tight">
+              Preparing your fields
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-neutral-400">
+              Syncing telemetry & machinery coordinates...
+            </p>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -495,6 +499,7 @@ export default function Home() {
   if (authChecked && !isAuthenticated) {
     return (
       <>
+        <AppSplashScreen />
         {/* Toast Notification Container */}
         <div className="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none">
           {toasts.map((toast) => (
@@ -526,7 +531,9 @@ export default function Home() {
   }
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-slate-100 dark:bg-neutral-950 text-slate-900 dark:text-neutral-100 font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-300 transition-colors duration-200">
+    <>
+      <AppSplashScreen />
+      <div className="flex h-screen w-full overflow-hidden bg-slate-100 dark:bg-neutral-950 text-slate-900 dark:text-neutral-100 font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-300 transition-colors duration-200">
       {/* Toast Notification Container */}
       <div className="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none">
         {toasts.map((toast) => (
@@ -578,9 +585,7 @@ export default function Home() {
             {/* Header: Branded Tractor Logo matching PC */}
             <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-white/10 mb-4">
               <div className="flex items-center gap-3 overflow-hidden">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center text-white shadow-emerald-glow shrink-0">
-                  <Tractor className="w-5 h-5" />
-                </div>
+                <AnimatedTractorLogo size="sm" showGlow={false} />
                 <div className="flex flex-col min-w-0">
                   <div className="flex items-center gap-1.5">
                     <span className="font-sora font-bold text-base tracking-tight text-slate-900 dark:text-white">
@@ -1044,5 +1049,6 @@ export default function Home() {
         onAddToast={addToast}
       />
     </div>
+    </>
   );
 }

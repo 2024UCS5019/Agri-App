@@ -4,13 +4,13 @@ import React from 'react';
 import { ActiveTab, User } from '@/types';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTheme } from '@/context/ThemeContext';
+import { AnimatedTractorLogo } from '@/components/AnimatedTractorLogo';
 import {
   Receipt,
   FileEdit,
   History,
   BarChart3,
   UserCheck,
-  Tractor,
   ChevronLeft,
   ChevronRight,
   ShieldCheck,
@@ -103,10 +103,7 @@ export function Sidebar({
       {/* Brand Header */}
       <div className={`flex items-center justify-between p-4 border-b ${theme === 'dark' ? 'border-white/10' : 'border-slate-200'}`}>
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center text-white shadow-emerald-glow shrink-0">
-            <Tractor className="w-5 h-5" />
-            <div className="absolute inset-0 rounded-xl border border-dashed border-emerald-300/40 animate-spin [animation-duration:20s] pointer-events-none" />
-          </div>
+          <AnimatedTractorLogo size="sm" showGlow={false} />
           {!effectiveCollapsed && (
             <div className="flex flex-col min-w-0">
               <div className="flex items-center gap-1.5">

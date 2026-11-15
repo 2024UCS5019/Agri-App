@@ -16,7 +16,7 @@ export const LANGUAGES: LanguageOption[] = [
 export const translations = {
   en: {
     // Brand & Header
-    appTitle: 'AGRI-FLEET OS',
+    appTitle: 'Agri-App',
     appSubtitle: 'Pro Edition',
     brandTag: 'Tractor Fleet & Billing',
     activeStatus: 'Active',
@@ -200,7 +200,7 @@ export const translations = {
 
   ta: {
     // Brand & Header
-    appTitle: 'அக்ரி-ஃபிளீட் OS',
+    appTitle: 'அக்ரி-ஆப்',
     appSubtitle: 'ப்ரோ பதிப்பு',
     brandTag: 'டிராக்டர் புக்கிங் & பில்லிங்',
     activeStatus: 'இயங்குகிறது',
@@ -384,7 +384,7 @@ export const translations = {
 
   te: {
     // Brand & Header
-    appTitle: 'అగ్రి-ఫ్లీట్ OS',
+    appTitle: 'అగ్రి-యాప్',
     appSubtitle: 'ప్రో ఎడిషన్',
     brandTag: 'ట్రాక్టర్ ఫ్లీట్ & బిల్లింగ్',
     activeStatus: 'యాక్టివ్',
@@ -568,7 +568,7 @@ export const translations = {
 
   kn: {
     // Brand & Header
-    appTitle: 'ಅಗ್ರಿ-ಫ್ಲೀಟ್ OS',
+    appTitle: 'ಅಗ್ರಿ-ಆಪ್',
     appSubtitle: 'ಪ್ರೊ ಆವೃತ್ತಿ',
     brandTag: 'ಟ್ರಾಕ್ಟರ್ ಫ್ಲೀಟ್ ಮತ್ತು ಬಿಲ್ಲಿಂಗ್',
     activeStatus: 'ಸಕ್ರಿಯವಾಗಿದೆ',

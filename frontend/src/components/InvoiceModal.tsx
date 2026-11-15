@@ -12,7 +12,7 @@ import {
   Download,
   CheckCircle2,
   AlertCircle,
-  Truck,
+  Tractor,
   Phone,
 } from 'lucide-react';
 
@@ -123,7 +123,7 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({ bill, onClose }) => 
           {/* Header Brand */}
           <div className="text-center border-b border-slate-200 dark:border-white/10 pb-4 print:border-gray-300">
             <div className="inline-flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 mb-2 print:bg-gray-100 print:text-black">
-              <Truck className="w-5 h-5 sm:w-6 sm:h-6" />
+              <Tractor className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white tracking-tight uppercase print:text-black">
               {serviceConfig.serviceName || 'MUTHU AGRI TRACTOR SERVICES'}
