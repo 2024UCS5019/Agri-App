@@ -26,3 +26,6 @@ yarn-error.log*
 *.db-journal
 .DS_Store
 Thumbs.db
+
+*.zip
+
