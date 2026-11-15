@@ -3,16 +3,30 @@
   "name": "Agri-App — Tractor Fleet OS",
   "short_name": "Agri-App",
   "description": "Enterprise Agri Fleet Billing, Work Ledger, and Real-Time Telemetry OS with MongoDB Atlas",
+  "lang": "en",
+  "dir": "ltr",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui"
+  ],
   "orientation": "portrait-primary",
   "background_color": "#080c14",
   "theme_color": "#1fa85a",
+  "prefer_related_applications": false,
+  "related_applications": [],
   "categories": [
     "business",
     "productivity",
     "utilities"
+  ],
+  "scope_extensions": [
+    {
+      "origin": "https://agri-backend-olr3.onrender.com"
+    }
   ],
   "icons": [
     {
@@ -48,6 +62,34 @@
       "type": "image/png",
       "form_factor": "narrow",
       "label": "Agri-App Mobile Field Billing"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Live Field Timer",
+      "short_name": "Timer",
+      "description": "Start tractor work live timer",
+      "url": "/",
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Fleet Work Ledger",
+      "short_name": "Ledger",
+      "description": "View farmer billing and ledger",
+      "url": "/",
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }

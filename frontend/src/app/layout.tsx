@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { ThemeProvider } from "@/context/ThemeContext";
-import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 
 export const metadata: Metadata = {
   title: "Agri-App — Tractor Bill Management & Fleet OS",
@@ -37,9 +36,30 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" dir="ltr" suppressHydrationWarning>
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="theme-color" content="#1fa85a" />
+        <script
+          id="pwa-service-worker-register"
+          dangerouslySetInnerHTML={{
+            __html: `
+              if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js').then(function(reg) {
+                    console.log('Agri-App Service Worker registered with scope: ' + reg.scope);
+                  }).catch(function(err) {
+                    console.warn('Agri-App Service Worker registration failed: ' + err);
+                  });
+                });
+              }
+            `,
+          }}
+        />
+      </head>
       <body className="font-sans antialiased bg-slate-50 dark:bg-[#080c14] text-slate-900 dark:text-slate-100 min-h-screen selection:bg-emerald-500 selection:text-black transition-colors duration-200">
-        <ServiceWorkerRegister />
         <ThemeProvider>
           <LanguageProvider>
             {children}
