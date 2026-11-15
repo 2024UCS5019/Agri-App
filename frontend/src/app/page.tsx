@@ -25,7 +25,7 @@ import { ManageDriversSection } from '@/components/ManageDriversSection';
 import { SettingsSection } from '@/components/SettingsSection';
 import { OwnerDashboardSection } from '@/components/OwnerDashboardSection';
 import { ProfilePopupModal } from '@/components/ProfilePopupModal';
-import { AnimatedTractorLogo, AppSplashScreen } from '@/components/AnimatedTractorLogo';
+import { AnimatedTractorLogo } from '@/components/AnimatedTractorLogo';
 import { useLanguage } from '@/context/LanguageContext';
 import {
   Menu,
@@ -478,20 +478,17 @@ export default function Home() {
   // Full-page centered loader while validating session (Example 1)
   if (!authChecked) {
     return (
-      <>
-        <AppSplashScreen />
-        <div className="min-h-screen w-full flex flex-col items-center justify-center bg-slate-100 dark:bg-neutral-950 text-slate-900 dark:text-neutral-100 p-6 transition-colors duration-200">
-          <LeafRingLoader size={75} ariaLabel="Preparing your fields" />
-          <div className="mt-6 text-center space-y-1.5 font-sora">
-            <h3 className="font-semibold text-lg text-slate-900 dark:text-neutral-100 tracking-tight">
-              Preparing your fields
-            </h3>
-            <p className="text-xs text-slate-500 dark:text-neutral-400">
-              Syncing telemetry & machinery coordinates...
-            </p>
-          </div>
+      <div className="min-h-screen w-full flex flex-col items-center justify-center bg-slate-100 dark:bg-neutral-950 text-slate-900 dark:text-neutral-100 p-6 transition-colors duration-200">
+        <LeafRingLoader size={75} ariaLabel="Preparing your fields" />
+        <div className="mt-6 text-center space-y-1.5 font-sora">
+          <h3 className="font-semibold text-lg text-slate-900 dark:text-neutral-100 tracking-tight">
+            Preparing your fields
+          </h3>
+          <p className="text-xs text-slate-500 dark:text-neutral-400">
+            Syncing telemetry & machinery coordinates...
+          </p>
         </div>
-      </>
+      </div>
     );
   }
 
@@ -499,7 +496,6 @@ export default function Home() {
   if (authChecked && !isAuthenticated) {
     return (
       <>
-        <AppSplashScreen />
         {/* Toast Notification Container */}
         <div className="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none">
           {toasts.map((toast) => (
@@ -531,9 +527,7 @@ export default function Home() {
   }
 
   return (
-    <>
-      <AppSplashScreen />
-      <div className="flex h-screen w-full overflow-hidden bg-slate-100 dark:bg-neutral-950 text-slate-900 dark:text-neutral-100 font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-300 transition-colors duration-200">
+    <div className="flex h-screen w-full overflow-hidden bg-slate-100 dark:bg-neutral-950 text-slate-900 dark:text-neutral-100 font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-300 transition-colors duration-200">
       {/* Toast Notification Container */}
       <div className="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none">
         {toasts.map((toast) => (
@@ -1049,6 +1043,5 @@ export default function Home() {
         onAddToast={addToast}
       />
     </div>
-    </>
   );
 }
