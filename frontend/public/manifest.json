@@ -16,8 +16,15 @@
   "orientation": "portrait-primary",
   "background_color": "#080c14",
   "theme_color": "#1fa85a",
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
   "prefer_related_applications": false,
-  "related_applications": [],
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=com.agriapp.fleet",
+      "id": "com.agriapp.fleet"
+    }
+  ],
   "categories": [
     "business",
     "productivity",
@@ -26,6 +33,12 @@
   "scope_extensions": [
     {
       "origin": "https://agri-backend-olr3.onrender.com"
+    },
+    {
+      "origin": "*.vercel.app"
+    },
+    {
+      "origin": "https://agri-app-ds2j.vercel.app"
     }
   ],
   "icons": [
